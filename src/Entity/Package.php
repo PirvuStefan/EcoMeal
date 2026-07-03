@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use AllowDynamicProperties;
 use App\Repository\PackageRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+#[AllowDynamicProperties]
 #[ORM\Entity(repositoryClass: PackageRepository::class)]
 class Package
 {
@@ -127,6 +129,13 @@ class Package
 
         $this->consumer_order = $consumer_order;
 
+        return $this;
+    }
+
+    public function setName(mixed $name)
+    {
+
+        $this->name = $name;
         return $this;
     }
 }

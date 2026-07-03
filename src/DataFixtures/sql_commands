@@ -1,0 +1,11 @@
+SELECT name, city
+FROM business;
+
+SELECT * FROM package
+WHERE price < 15;
+
+SELECT * FROM consumer WHERE last_name = "Popescu";
+
+SELECT * FROM package ORDER BY price DESC;
+
+SELECT * FROM business WHERE city = "Craiova"
