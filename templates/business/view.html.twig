@@ -18,9 +18,14 @@
     <p> {{ business.phoneNumber }}</p>
     <p> {{ business.businessType.name }}</p>
 
+    <a href = "{{ path('app_package_new', { id: business.id }) }}" >Add Package</a>
+
     {{ include('table.html.twig', { packages: packages }) }}
 
     <a href = "{{ path('app_business') }}">Back to list</a>
+    <br>
+    <br>
+
 
 
 
