@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Business;
+use App\Entity\BusinessType;
 use App\Entity\Package;
 use App\Form\PackageFormType;
+use App\Repository\BusinessRepository;
 use App\Repository\PackageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,10 +33,12 @@ final class PackageController extends AbstractController
         ]);
     }
 
-    #[Route('/new/package', name: 'app_package_new', methods: ['GET','POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/business/{id}/new/package', name: 'app_package_new', methods: ['GET','POST'])]
+    public function new(Request $request, int $id, EntityManagerInterface $entityManager, BusinessRepository $repositoryCall): Response
     {
         $package = new Package();
+        $business = $repositoryCall->find($id);
+        $package->setBusiness($business);
         $form = $this->createForm(PackageFormType::class, $package);
         $form->handleRequest($request);
 
@@ -49,4 +54,6 @@ final class PackageController extends AbstractController
             'form' => $form,
         ]);
     }
+
+    //update a package
 }

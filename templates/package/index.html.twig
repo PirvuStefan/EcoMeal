@@ -1,5 +1,4 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Hello PackageController!{% endblock %}
 
 {% block body %}
@@ -9,32 +8,7 @@
 </style>
 
 <div class="example-wrapper">
+    {{ include('table.html.twig', { packages: packages }) }}
 
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Photo</th>
-            <th>Created At</th>
-            <th>Category</th>
-            <th>Business</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for package in packages %}
-            <tr>
-                <td><a href="{{ path('app_package_view', { id: package.id }) }}">{{ package.id }}</a></td>
-                <td>{{ package.description }}</td>
-                <td>{{ package.price }}</td>
-                <td>{{ package.photo }}</td>
-                <td>{{ package.createdAt ? package.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ package.category.name }}</td>
-                <td>{{ package.business.name }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 </div>
 {% endblock %}

@@ -18,6 +18,8 @@
     <p> {{ business.phoneNumber }}</p>
     <p> {{ business.businessType.name }}</p>
 
+    {{ include('table.html.twig', { packages: packages }) }}
+
     <a href = "{{ path('app_business') }}">Back to list</a>
 
 
