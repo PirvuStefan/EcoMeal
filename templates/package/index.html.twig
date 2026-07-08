@@ -1,14 +1,28 @@
 {% extends 'base.html.twig' %}
-{% block title %}Hello PackageController!{% endblock %}
+
+{% block title %}Packages | EcoMeal{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Catalog</p>
+            <h1 class="page-title">Packages</h1>
+            <p class="page-subtitle">Browse all offers and open a package to review its details.</p>
+        </div>
 
-<div class="example-wrapper">
-    {{ include('table.html.twig', { packages: packages }) }}
+        <div class="toolbar">
+            <a class="btn btn-primary" href="{{ path('app_business') }}">Add package via business</a>
+        </div>
+    </section>
 
-</div>
+    <section class="card">
+        <div class="card-header">
+            <div>
+                <strong>{{ packages|length }}</strong>
+                <span class="muted">packages total</span>
+            </div>
+        </div>
+
+        {{ include('table.html.twig', { packages: packages }) }}
+    </section>
 {% endblock %}

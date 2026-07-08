@@ -40,6 +40,9 @@ class Business
     #[ORM\OneToMany(targetEntity: Package::class, mappedBy: 'business', orphanRemoval: true)]
     private Collection $packages;
 
+    #[ORM\OneToOne(mappedBy: 'business', cascade: ['persist', 'remove'])]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->packages = new ArrayCollection();
@@ -148,6 +151,28 @@ class Business
                 $package->setBusiness(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($user === null && $this->user !== null) {
+            $this->user->setBusiness(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($user !== null && $user->getBusiness() !== $this) {
+            $user->setBusiness($this);
+        }
+
+        $this->user = $user;
 
         return $this;
     }

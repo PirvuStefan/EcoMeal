@@ -1,50 +1,68 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello BusinessController!{% endblock %}
+{% block title %}Businesses | EcoMeal{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Directory</p>
+            <h1 class="page-title">Businesses</h1>
+            <p class="page-subtitle">Review your business partners and open a profile for package management.</p>
+        </div>
 
-<div class="example-wrapper">
+        <div class="toolbar">
+            <a class="btn btn-primary" href="{{ path('app_business_new') }}">New business</a>
+        </div>
+    </section>
 
+    <section class="card">
+        <div class="card-header">
+            <div>
+                <strong>{{ businesses|length }}</strong>
+                <span class="muted">registered businesses</span>
+            </div>
+        </div>
 
-    <a href = "{{ path("app_business_new")}}" >Create new business</a>
-    <br>
-
-    <table>
-     <thead>
-
-         <tr>
-             <th>Name</th>
-             <th>City</th>
-             <th>Street</th>
-             <th>House Number</th>
-             <th>Phone Number</th>
-             <th>BusinessType</th>
-         </tr>
-     </thead>
-     <tbody>
-     {% for business in businesses %}
-         <tr>
-            <td><a href = " {{ path('app_business_view', {
-            id: business.id
-
-    }) }}" > {{ business.id }}</a></td>
-
-            <td>{{ business.name }}</td>
-            <td> {{ business.city }}</td>
-            <td> {{ business.street }}</td>
-             <td> {{ business.houseNumber }}</td>
-            <td> {{ business.phoneNumber }}</td>
-            <td> {{ business.businessType.name }}</td>
-         </tr>
-     {% endfor %}
-     </tbody>
-
-
-    </table>
-</div>
+        <div class="table-shell">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Business</th>
+                    <th>City</th>
+                    <th>Street</th>
+                    <th>House No.</th>
+                    <th>Phone</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for business in businesses %}
+                    <tr>
+                        <td>
+                            <a class="table-link" href="{{ path('app_business_view', { id: business.id }) }}">
+                                {{ business.name }}
+                            </a>
+                            <div class="table-meta">ID {{ business.id }}</div>
+                        </td>
+                        <td>{{ business.city }}</td>
+                        <td>{{ business.street }}</td>
+                        <td>{{ business.houseNumber }}</td>
+                        <td>{{ business.phoneNumber }}</td>
+                        <td><span class="badge">{{ business.businessType ? business.businessType.name : '—' }}</span></td>
+                        <td class="table-actions">
+                            <a class="btn btn-ghost btn-sm" href="{{ path('app_business_view', { id: business.id }) }}">Open</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">No businesses yet. Create the first one to get started.</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
 {% endblock %}

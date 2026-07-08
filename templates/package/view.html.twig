@@ -1,24 +1,56 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello PackageController!{% endblock %}
+{% block title %}Package #{{ package.id }} | EcoMeal{% endblock %}
 
 {% block body %}
-    <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    </style>
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Package profile</p>
+            <h1 class="page-title">{{ package.description }}</h1>
+            <p class="page-subtitle">{{ package.business ? package.business.name : 'Unassigned business' }}</p>
+        </div>
 
-<div class="example-wrapper">
+        <div class="toolbar">
+            <a class="btn btn-primary" href="{{ path('app_package_edit', { id: package.id }) }}">Edit package</a>
+            <a class="btn btn-ghost" href="{{ path('app_package') }}">Back to list</a>
+        </div>
+    </section>
 
-    <p>{{ package.id }}</p>
-    <p>{{ package.description }}</p>
-    <p>{{ package.price }}</p>
-    <p>{{ package.photo }}</p>
-    <p>{{ package.createdAt ? package.createdAt|date('Y-m-d H:i:s') : '' }}</p>
-    <p>{{ package.category.name }}</p>
-    <p>{{ package.business.name }}</p>
+    <section class="detail-grid">
+        <article class="card detail-card detail-card--wide">
+            <p class="eyebrow">Details</p>
+            <dl class="info-list">
+                <div>
+                    <dt>ID</dt>
+                    <dd>{{ package.id }}</dd>
+                </div>
+                <div>
+                    <dt>Description</dt>
+                    <dd>{{ package.description }}</dd>
+                </div>
+                <div>
+                    <dt>Price</dt>
+                    <dd>{{ package.price }}</dd>
+                </div>
+                <div>
+                    <dt>Photo</dt>
+                    <dd>{{ package.photo }}</dd>
+                </div>
+                <div>
+                    <dt>Created at</dt>
+                    <dd>{{ package.createdAt ? package.createdAt|date('Y-m-d H:i:s') : '—' }}</dd>
+                </div>
+                <div>
+                    <dt>Category</dt>
+                    <dd>{{ package.category ? package.category.name : '—' }}</dd>
+                </div>
+            </dl>
+        </article>
 
-    <a href="{{ path('app_package') }}">Back to list</a>
-</div>
-
+        <article class="card detail-card detail-card--narrow">
+            <p class="eyebrow">Business</p>
+            <p class="stat">#{{ package.business ? package.business.id : '—' }}</p>
+            <p class="muted">{{ package.business ? package.business.name : 'No business assigned' }}</p>
+        </article>
+    </section>
 {% endblock %}

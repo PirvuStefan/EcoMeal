@@ -1,34 +1,67 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello BusinessController!{% endblock %}
+{% block title %}{{ business.name }} | EcoMeal{% endblock %}
 
 {% block body %}
-    <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    </style>
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Business profile</p>
+            <h1 class="page-title">{{ business.name }}</h1>
+            <p class="page-subtitle">{{ business.city }}, {{ business.street }} {{ business.houseNumber }}</p>
+        </div>
 
-<div class="example-wrapper">
+        <div class="toolbar">
+            <a class="btn btn-primary" href="{{ path('app_package_new', { id: business.id }) }}">Add package</a>
+            <a class="btn btn-ghost" href="{{ path('app_business') }}">Back to list</a>
+        </div>
+    </section>
 
-    <p> {{ business.id }}</p>
-    <p> {{ business.name }}</p>
-    <p> {{ business.city }}</p>
-    <p> {{ business.street }}</p>
-    <p> {{ business.houseNumber }}</p>
-    <p> {{ business.phoneNumber }}</p>
-    <p> {{ business.businessType.name }}</p>
+    <section class="detail-grid">
+        <article class="card detail-card detail-card--wide">
+            <p class="eyebrow">Details</p>
+            <dl class="info-list">
+                <div>
+                    <dt>ID</dt>
+                    <dd>{{ business.id }}</dd>
+                </div>
+                <div>
+                    <dt>City</dt>
+                    <dd>{{ business.city }}</dd>
+                </div>
+                <div>
+                    <dt>Street</dt>
+                    <dd>{{ business.street }}</dd>
+                </div>
+                <div>
+                    <dt>House number</dt>
+                    <dd>{{ business.houseNumber }}</dd>
+                </div>
+                <div>
+                    <dt>Phone number</dt>
+                    <dd>{{ business.phoneNumber }}</dd>
+                </div>
+                <div>
+                    <dt>Business type</dt>
+                    <dd>{{ business.businessType ? business.businessType.name : '—' }}</dd>
+                </div>
+            </dl>
+        </article>
 
-    <a href = "{{ path('app_package_new', { id: business.id }) }}" >Add Package</a>
+        <article class="card detail-card detail-card--narrow">
+            <p class="eyebrow">Packages</p>
+            <p class="stat">{{ packages|length }}</p>
+            <p class="muted">Packages linked to this business.</p>
+        </article>
+    </section>
 
-    {{ include('table.html.twig', { packages: packages }) }}
+    <section class="card">
+        <div class="card-header">
+            <div>
+                <strong>Packages</strong>
+                <span class="muted">managed by this business</span>
+            </div>
+        </div>
 
-    <a href = "{{ path('app_business') }}">Back to list</a>
-    <br>
-    <br>
-
-
-
-
-</div>
-
+        {{ include('table.html.twig', { packages: packages }) }}
+    </section>
 {% endblock %}

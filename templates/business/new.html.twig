@@ -1,26 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello BusinessController!{% endblock %}
+{% block title %}New Business | EcoMeal{% endblock %}
 
 {% block body %}
-    <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    </style>
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Business form</p>
+            <h1 class="page-title">Create business</h1>
+            <p class="page-subtitle">Add a clean, easy-to-find profile for a new partner.</p>
+        </div>
+    </section>
 
-    <div class="example-wrapper">
+    <section class="form-card">
+        {{ form_start(form, {'attr': {'class': 'app-form'}}) }}
+        <div class="form-grid">
+            {{ form_row(form.name) }}
+            {{ form_row(form.city) }}
+            {{ form_row(form.street) }}
+            {{ form_row(form.houseNumber) }}
+            {{ form_row(form.phoneNumber) }}
+            {{ form_row(form.businessType) }}
+        </div>
 
-       {{ form_start(form) }}
-        {{ form_row(form.name) }}
-        {{ form_row(form.city) }}
-        {{ form_row(form.street) }}
-        {{ form_row(form.houseNumber) }}
-        {{ form_row(form.phoneNumber) }}
-        {{ form_row(form.businessType) }}
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Create business</button>
+            <a class="btn btn-ghost" href="{{ path('app_business') }}">Back to list</a>
+        </div>
         {{ form_end(form) }}
-
-
-
-    </div>
-
+    </section>
 {% endblock %}

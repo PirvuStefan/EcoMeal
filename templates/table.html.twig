@@ -1,40 +1,43 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Hello PackageController!{% endblock %}
-
-{% block body %}
-    <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    </style>
-
-    <div class="example-wrapper">
-
-        <table>
-            <thead>
+<div class="table-shell">
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Package</th>
+            <th>Price</th>
+            <th>Photo</th>
+            <th>Created at</th>
+            <th>Category</th>
+            <th>Business</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for package in packages %}
             <tr>
-                <th>ID</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Photo</th>
-                <th>Created At</th>
-                <th>Category</th>
-                <th>Business</th>
+                <td>
+                    <a class="table-link" href="{{ path('app_package_view', { id: package.id }) }}">
+                        {{ package.description }}
+                    </a>
+                    <div class="table-meta">ID {{ package.id }}</div>
+                </td>
+                <td>{{ package.price|number_format(2, '.', ',') }}</td>
+                <td>{{ package.photo }}</td>
+                <td>{{ package.createdAt ? package.createdAt|date('Y-m-d H:i') : '—' }}</td>
+                <td><span class="badge">{{ package.category ? package.category.name : '—' }}</span></td>
+                <td>{{ package.business ? package.business.name : '—' }}</td>
+                <td class="table-actions">
+                    <a class="btn btn-ghost btn-sm" href="{{ path('app_package_view', { id: package.id }) }}">View</a>
+                    <a class="btn btn-ghost btn-sm" href="{{ path('app_package_edit', { id: package.id }) }}">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="{{ path('app_package_delete', { id: package.id }) }}" onclick="return confirm('Delete this package?');">Delete</a>
+                </td>
             </tr>
-            </thead>
-            <tbody>
-            {% for package in packages %}
-                <tr>
-                    <td><a href="{{ path('app_package_view', { id: package.id }) }}">{{ package.id }}</a></td>
-                    <td>{{ package.description }}</td>
-                    <td>{{ package.price }}</td>
-                    <td>{{ package.photo }}</td>
-                    <td>{{ package.createdAt ? package.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                    <td>{{ package.category.name }}</td>
-                    <td>{{ package.business.name }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-{% endblock %}
+        {% else %}
+            <tr>
+                <td colspan="7">
+                    <div class="empty-state">No packages found yet.</div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

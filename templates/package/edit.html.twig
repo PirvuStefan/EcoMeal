@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Package | EcoMeal{% endblock %}
+
+{% block body %}
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Package form</p>
+            <h1 class="page-title">Edit package</h1>
+            <p class="page-subtitle">Update the package details without changing how the app works.</p>
+        </div>
+    </section>
+
+    <section class="form-card">
+        {{ form_start(form, {'attr': {'class': 'app-form'}}) }}
+        <div class="form-grid">
+            {{ form_row(form.description) }}
+            {{ form_row(form.price) }}
+            {{ form_row(form.photo) }}
+            {{ form_row(form.category) }}
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Save changes</button>
+            <a class="btn btn-ghost" href="{{ path('app_package') }}">Back to list</a>
+        </div>
+        {{ form_end(form) }}
+    </section>
+{% endblock %}

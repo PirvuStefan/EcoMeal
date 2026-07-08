@@ -1,21 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Create Package{% endblock %}
+{% block title %}New Package | EcoMeal{% endblock %}
 
 {% block body %}
-    <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    </style>
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Package form</p>
+            <h1 class="page-title">Create package</h1>
+            <p class="page-subtitle">Add a new package and keep the catalog organized.</p>
+        </div>
+    </section>
 
-    <div class="example-wrapper">
-        {{ form_start(form) }}
-        {{ form_row(form.description) }}
-        {{ form_row(form.price) }}
-        {{ form_row(form.photo) }}
-        {{ form_row(form.category) }}
-        <button type="submit">Create</button>
+    <section class="form-card">
+        {{ form_start(form, {'attr': {'class': 'app-form'}}) }}
+        <div class="form-grid">
+            {{ form_row(form.description) }}
+            {{ form_row(form.price) }}
+            {{ form_row(form.photo) }}
+            {{ form_row(form.category) }}
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Create package</button>
+            <a class="btn btn-ghost" href="{{ path('app_business') }}">Back to businesses</a>
+        </div>
         {{ form_end(form) }}
-    </div>
+    </section>
 
 {% endblock %}
