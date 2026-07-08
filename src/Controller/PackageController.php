@@ -10,6 +10,7 @@ use App\Repository\BusinessRepository;
 use App\Repository\PackageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -35,8 +36,22 @@ final class PackageController extends AbstractController
     }
 
     #[Route('/business/{id}/new/package', name: 'app_package_new', methods: ['GET','POST'])]
-    public function new(Request $request, int $id, EntityManagerInterface $entityManager, BusinessRepository $repositoryCall): Response
+    public function new(Request $request, int $id, EntityManagerInterface $entityManager, BusinessRepository $repositoryCall, Security $security): Response
     {
+
+        $this->denyAccessUnlessGranted('ROLE_BUSINESS');
+        $user = $security->getUser();
+
+        if(!$user) {
+            return $this->redirectToRoute('app_package');
+        }
+
+        if($user->getId() !== $id) {
+
+            return $this->redirectToRoute('app_package');
+
+        }
+
         $package = new Package();
         $business = $repositoryCall->find($id);
         $package->setBusiness($business);
@@ -48,7 +63,8 @@ final class PackageController extends AbstractController
             $entityManager->persist($package);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_package');
+
+
         }
 
         return $this->render('package/new.html.twig', [
