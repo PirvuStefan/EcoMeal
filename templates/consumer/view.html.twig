@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ consumer.firstName }} {{ consumer.lastName }} | EcoMeal{% endblock %}
+
+{% block body %}
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Customer profile</p>
+            <h1 class="page-title">{{ consumer.firstName }} {{ consumer.lastName }}</h1>
+            <p class="page-subtitle">ID {{ consumer.id }}</p>
+        </div>
+
+        <div class="toolbar">
+            <a class="btn btn-primary" href="{{ path('app_consumer_edit', { id: consumer.id }) }}">Edit customer</a>
+            <a class="btn btn-ghost" href="{{ path('app_consumer') }}">Back to list</a>
+        </div>
+    </section>
+
+    <section class="detail-grid">
+        <article class="card detail-card detail-card--wide">
+            <p class="eyebrow">Details</p>
+            <dl class="info-list">
+                <div>
+                    <dt>ID</dt>
+                    <dd>{{ consumer.id }}</dd>
+                </div>
+                <div>
+                    <dt>First name</dt>
+                    <dd>{{ consumer.firstName }}</dd>
+                </div>
+                <div>
+                    <dt>Last name</dt>
+                    <dd>{{ consumer.lastName }}</dd>
+                </div>
+                <div>
+                    <dt>Phone number</dt>
+                    <dd>{{ consumer.phoneNumber }}</dd>
+                </div>
+            </dl>
+        </article>
+
+        <article class="card detail-card detail-card--narrow">
+            <p class="eyebrow">Orders</p>
+            <p class="stat">{{ orders|length }}</p>
+            <p class="muted">Total orders placed by this customer.</p>
+        </article>
+    </section>
+
+    {% if orders|length > 0 %}
+    <section class="card">
+        <div class="card-header">
+            <div>
+                <strong>Orders</strong>
+                <span class="muted">placed by this customer</span>
+            </div>
+        </div>
+
+        <div class="table-shell">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Package</th>
+                    <th>Created at</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>
+                            <span class="table-link">#{{ order.id }}</span>
+                        </td>
+                        <td>{{ order.package ? order.package.description : '—' }}</td>
+                        <td>{{ order.createdAt ? order.createdAt|date('Y-m-d H:i') : '—' }}</td>
+                        <td class="table-actions">
+                            <span class="muted">View via packages</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endif %}
+{% endblock %}

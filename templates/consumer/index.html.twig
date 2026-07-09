@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Customers | EcoMeal{% endblock %}
+
+{% block body %}
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Directory</p>
+            <h1 class="page-title">Customers</h1>
+            <p class="page-subtitle">Manage your customer profiles and review their orders.</p>
+        </div>
+
+        <div class="toolbar">
+            <a class="btn btn-primary" href="{{ path('app_consumer_new') }}">New customer</a>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <div>
+                <strong>{{ consumers|length }}</strong>
+                <span class="muted">registered customers</span>
+            </div>
+        </div>
+
+        <div class="table-shell">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Orders</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for consumer in consumers %}
+                    <tr>
+                        <td>
+                            <a class="table-link" href="{{ path('app_consumer_view', { id: consumer.id }) }}">
+                                {{ consumer.firstName }} {{ consumer.lastName }}
+                            </a>
+                            <div class="table-meta">ID {{ consumer.id }}</div>
+                        </td>
+                        <td>{{ consumer.phoneNumber }}</td>
+                        <td>{{ consumer.orders|length }}</td>
+                        <td class="table-actions">
+                            <a class="btn btn-ghost btn-sm" href="{{ path('app_consumer_view', { id: consumer.id }) }}">View</a>
+                            <a class="btn btn-ghost btn-sm" href="{{ path('app_consumer_edit', { id: consumer.id }) }}">Edit</a>
+                            <a class="btn btn-danger btn-sm" href="{{ path('app_consumer_delete', { id: consumer.id }) }}" onclick="return confirm('Delete this customer?');">Delete</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">
+                            <div class="empty-state">No customers yet. Create the first one to get started.</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock %}

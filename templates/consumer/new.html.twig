@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Customer | EcoMeal{% endblock %}
+
+{% block body %}
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Customer form</p>
+            <h1 class="page-title">Create customer</h1>
+            <p class="page-subtitle">Add a new customer to your database.</p>
+        </div>
+    </section>
+
+    <section class="form-card">
+        {{ form_start(form, {'attr': {'class': 'app-form'}}) }}
+        <div class="form-grid">
+            {{ form_row(form.first_name) }}
+            {{ form_row(form.last_name) }}
+            {{ form_row(form.phone_number) }}
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Create customer</button>
+            <a class="btn btn-ghost" href="{{ path('app_consumer') }}">Back to list</a>
+        </div>
+        {{ form_end(form) }}
+    </section>
+{% endblock %}
