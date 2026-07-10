@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Dto\PackageSearchFilter;
 use App\Entity\Business;
 use App\Entity\BusinessType;
 use App\Entity\Package;
+use App\Form\PackageFiltersType;
 use App\Form\PackageFormType;
 use App\Repository\BusinessRepository;
 use App\Repository\PackageRepository;
@@ -19,12 +21,16 @@ use function PHPUnit\Framework\isNull;
 final class PackageController extends AbstractController
 {
     #[Route('/packages', name: 'app_package')]
-    public function index(PackageRepository $repository): Response
+    public function index(Request $request, PackageRepository $repository): Response
     {
 
-        $packages = $repository->findAll();
+        $filter = new PackageSearchFilter();
+        $form = $this->createForm(PackageFiltersType::class, $filter);
+        $form->handleRequest($request);
+
         return $this->render('package/index.html.twig', [
-            'packages' => $packages,
+            'packages' => $repository->findByFilter($filter),
+            'package_filter_form' => $form->createView(),
         ]);
     }
 
@@ -77,10 +83,22 @@ final class PackageController extends AbstractController
     //update a package
 
     #[Route('/packages/{id}/edit', name: 'app_package_edit', methods: ['GET','POST'])]
-    public function edit(Request $request, Package $package, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Package $package, EntityManagerInterface $entityManager, Security $security): Response
     {
         $form = $this->createForm(PackageFormType::class, $package);
         $form->handleRequest($request);
+
+        $user = $security->getUser();
+
+
+
+        $this->denyAccessUnlessGranted('ROLE_BUSINESS');
+
+
+        if($user->getBusiness()->getId() !== $package->getBusiness()->getId()) {
+            return $this->redirectToRoute('app_package');
+        }// doar daca detin pachetul pot sa il editez
+
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
@@ -94,13 +112,25 @@ final class PackageController extends AbstractController
     }
 
     #[Route('/packages/{id}/delete', name: 'app_package_delete', methods: ['GET'])]
-    public function delete(Request $request, int $id, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Package $package, EntityManagerInterface $entityManager, Security $security): Response
     {
-        $package = $entityManager->find(Package::class, $id);
 
-            if(is_null($package)){
-                return $this->redirectToRoute('app_business');
-            }
+
+        if(is_null($package)){
+            return $this->redirectToRoute('app_business');
+        }
+
+
+        $this->denyAccessUnlessGranted('ROLE_BUSINESS');
+
+        $user = $security->getUser();
+
+
+        if($user->getBusiness()->getId() !== $package->getBusiness()->getId()) {
+            return $this->redirectToRoute('app_package');
+        }// doar daca detin pachetul pot sa il sterg
+
+
             $entityManager->remove($package);
             $entityManager->flush();
 
