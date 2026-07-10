@@ -40,6 +40,9 @@ class Package
     #[ORM\OneToOne(mappedBy: 'package', cascade: ['persist', 'remove'])]
     private ?Order $consumer_order = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -132,6 +135,18 @@ class Package
         }
 
         $this->consumer_order = $consumer_order;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
 
         return $this;
     }
