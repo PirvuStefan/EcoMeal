@@ -2,6 +2,7 @@
     <table class="data-table">
         <thead>
         <tr>
+            <th>Name</th>
             <th>Package</th>
             <th>Price</th>
             <th>Photo</th>
@@ -15,6 +16,9 @@
         {% for package in packages %}
             <tr>
                 <td>
+                    {{ package.name ? package.name : '—' }}
+                </td>
+                <td>
                     <a class="table-link" href="{{ path('app_package_view', { id: package.id }) }}">
                         {{ package.description }}
                     </a>
@@ -27,7 +31,7 @@
                 <td>{{ package.business ? package.business.name : '—' }}</td>
                 <td class="table-actions">
                     <a class="btn btn-ghost btn-sm" href="{{ path('app_package_view', { id: package.id }) }}">View</a>
-                    {% if is_granted('ROLE_BUSINESS') %}
+                    {% if is_granted('ROLE_BUSINESS') and app.user.business == package.business %}
                         <a class="btn btn-ghost btn-sm" href="{{ path('app_package_edit', { id: package.id }) }}">Edit</a>
                         <a class="btn btn-danger btn-sm" href="{{ path('app_package_delete', { id: package.id }) }}" onclick="return confirm('Delete this package?');">Delete</a>
                     {% endif %}

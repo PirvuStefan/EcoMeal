@@ -25,7 +25,7 @@ final class PackageController extends AbstractController
     {
 
         $filter = new PackageSearchFilter();
-        $form = $this->createForm(PackageFiltersType::class, $filter);
+        $form = $this->createForm(PackageFiltersType::class, $filter, ['csrf_protection' => false]);
         $form->handleRequest($request);
 
         return $this->render('package/index.html.twig', [
