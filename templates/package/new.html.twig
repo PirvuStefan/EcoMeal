@@ -12,8 +12,9 @@
     </section>
 
     <section class="form-card">
-        {{ form_start(form, {'attr': {'class': 'app-form'}}) }}
+        {{ form_start(form, {'attr': {'class  ': 'app-form'}}) }}
         <div class="form-grid">
+            {{ form_row(form.name) }}
             {{ form_row(form.description) }}
             {{ form_row(form.price) }}
             {{ form_row(form.photo) }}

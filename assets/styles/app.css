@@ -424,3 +424,65 @@ textarea:focus {
         padding: 0.8rem;
     }
 }
+
+/* Package Filter Form Styling */
+.app-main > form {
+    max-width: 300px;
+    width: 100%;
+    float: left;
+    margin-right: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.app-main > form fieldset {
+    background: var(--surface);
+    border: 1px solid rgba(219, 227, 239, 0.9);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.app-main > form fieldset legend {
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    padding: 0 0.5rem;
+    margin-left: -0.5rem;
+}
+
+.app-main > form input,
+.app-main > form select {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.app-main > form label {
+    font-size: 0.82rem;
+    margin-bottom: 0.3rem;
+}
+
+.app-main > form button {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+}
+
+.app-main > section {
+    overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+    .app-main > form {
+        max-width: 100%;
+        float: none;
+        margin-right: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .app-main > section {
+        overflow: visible;
+    }
+}

@@ -21,7 +21,11 @@ class PackageRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('p')
             ->leftJoin('p.category', 'c')
-            ->addSelect('c');
+            ->addSelect('c')
+            ->leftJoin('p.business', 'b')
+            ->addSelect('b')
+            ->leftJoin('b.business_type', 'bt')
+            ->addSelect('bt');
 
         if($filter->name) {
             $qb->andWhere('p.name LIKE :name')
@@ -34,6 +38,18 @@ class PackageRepository extends ServiceEntityRepository
         if($filter->maxPrice) {
             $qb->andWhere('p.price < :maxPrice')
                 ->setParameter('maxPrice', $filter->maxPrice);
+        }
+        if($filter->category) {
+            $qb->andWhere('c.id = :category')
+                ->setParameter('category', $filter->category->getId());
+        }
+        if($filter->business) {
+            $qb->andWhere('b.id = :business')
+                ->setParameter('business', $filter->business->getId());
+        }
+        if($filter->businessType) {
+            $qb->andWhere('bt.id = :businessType')
+                ->setParameter('businessType', $filter->businessType->getId());
         }
 
         return $qb->getQuery()->getResult();

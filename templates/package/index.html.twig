@@ -14,7 +14,7 @@
 
         <div class="toolbar">
             {% if is_granted('ROLE_BUSINESS') %}
-                <a class="btn btn-primary" href="{{ path('app_business') }}">Add package via business</a>
+                <a class="btn btn-primary" href="{{ path('app_business_view', {'id': app.user.business.id}) }}">Add package via business</a>
             {% endif %}
         </div>
     </section>

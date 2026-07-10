@@ -54,7 +54,7 @@ final class PackageController extends AbstractController
             return $this->redirectToRoute('app_package');
         }
 
-        if($user->getId() !== $id) {
+        if($user->getBusiness()->getId() !== $id) {
 
             return $this->redirectToRoute('app_package');
 
@@ -71,13 +71,18 @@ final class PackageController extends AbstractController
             $entityManager->persist($package);
             $entityManager->flush();
 
+            return $this->redirectToRoute('app_package_view', ['id' => $package->getId()]);
+
 
 
         }
 
         return $this->render('package/new.html.twig', [
             'form' => $form,
+
         ]);
+
+
     }
 
     //update a package
