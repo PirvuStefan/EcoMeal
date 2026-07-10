@@ -21,6 +21,7 @@ final class PackageController extends AbstractController
     #[Route('/packages', name: 'app_package')]
     public function index(PackageRepository $repository): Response
     {
+
         $packages = $repository->findAll();
         return $this->render('package/index.html.twig', [
             'packages' => $packages,
@@ -30,6 +31,7 @@ final class PackageController extends AbstractController
     #[Route('/packages/{id}', name: 'app_package_view')]
     public function view(Package $package): Response
     {
+
         return $this->render('package/view.html.twig', [
             'package' => $package,
         ]);

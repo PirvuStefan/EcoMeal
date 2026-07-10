@@ -26,7 +26,7 @@ final class ConsumerController extends AbstractController
             return $this->redirectToRoute('app_package');
         }
         $roles = $user->getRoles();
-        if($user->getId() != $consumer->getId() or $roles == 'ROLE_BUSINESS') {
+        if($user->getId() != $consumer->getId() and !in_array('ROLE_ADMIN', $roles)) {
             // adminul si doar userul de tip consumer cu id ul lui poate vedea aceasta pagina ig
             return $this->redirectToRoute('app_package');
         }
@@ -57,10 +57,20 @@ final class ConsumerController extends AbstractController
     }
 
     #[Route('/customers/{id}/edit', name: 'app_consumer_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Consumer $consumer, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Consumer $consumer, EntityManagerInterface $entityManager, Security $security): Response
     {
 
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $user = $security->getUser();
+        if(!$user) {
+            return $this->redirectToRoute('app_package');
+        }
+        $roles = $user->getRoles();
+        if($user->getId() != $consumer->getId() and !in_array('ROLE_CONSUMER', $roles)) {
+            // adminul si doar userul de tip consumer cu id ul lui poate vedea aceasta pagina ig
+            return $this->redirectToRoute('app_package');
+        }
+
+
         $form = $this->createForm(ConsumerFormType::class, $consumer);
         $form->handleRequest($request);
 
