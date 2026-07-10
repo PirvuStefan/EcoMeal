@@ -11,7 +11,9 @@
         </div>
 
         <div class="toolbar">
-            <a class="btn btn-primary" href="{{ path('app_package_edit', { id: package.id }) }}">Edit package</a>
+            {% if is_granted('ROLE_BUSINESS') %}
+                <a class="btn btn-primary" href="{{ path('app_package_edit', { id: package.id }) }}">Edit package</a>
+            {% endif %}
             <a class="btn btn-ghost" href="{{ path('app_package') }}">Back to list</a>
         </div>
     </section>
