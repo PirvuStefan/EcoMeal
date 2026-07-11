@@ -31,9 +31,16 @@
                 </div>
 
                 <nav class="app-nav" aria-label="Primary">
-                    <a href="{{ path('app_business') }}">Businesses</a>
                     <a href="{{ path('app_package') }}">Packages</a>
-                    <a href="{{ path('app_consumer') }}">Customers</a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_business') }}">Businesses</a>
+                        <a href="{{ path('app_consumer') }}">Customers</a>
+                        <a href="{{ path('app_order') }}">Orders</a>
+                    {% elseif is_granted('ROLE_CONSUMER') %}
+                        <a href="{{ path('app_order_my') }}">My orders</a>
+                    {% elseif is_granted('ROLE_BUSINESS') %}
+                        <a href="{{ path('app_order_business') }}">Orders</a>
+                    {% endif %}
                 </nav>
             </header>
 

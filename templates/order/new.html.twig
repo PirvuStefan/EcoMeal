@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Order | EcoMeal{% endblock %}
+
+{% block body %}
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Order form</p>
+            <h1 class="page-title">Create order</h1>
+            <p class="page-subtitle">Create a new order manually.</p>
+        </div>
+    </section>
+
+    <section class="form-card">
+        {{ form_start(form, {'attr': {'class': 'app-form'}}) }}
+        <div class="form-grid">
+            {{ form_row(form.created_at) }}
+            {{ form_row(form.package) }}
+            {{ form_row(form.consumer) }}
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Create order</button>
+            <a class="btn btn-ghost" href="{{ path('app_order') }}">Back to orders</a>
+        </div>
+        {{ form_end(form) }}
+    </section>
+{% endblock %}

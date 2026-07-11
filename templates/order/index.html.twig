@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Orders | EcoMeal{% endblock %}
+
+{% block body %}
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Orders</p>
+            <h1 class="page-title">All orders</h1>
+            <p class="page-subtitle">Manage every order in the platform.</p>
+        </div>
+
+        <div class="toolbar">
+            <a class="btn btn-primary" href="{{ path('app_order_new') }}">New order</a>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <div>
+                <strong>{{ orders|length }}</strong>
+                <span class="muted">orders total</span>
+            </div>
+        </div>
+
+        <div class="table-shell">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Package</th>
+                    <th>Customer</th>
+                    <th>Business</th>
+                    <th>Created at</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.package ? order.package.description : '—' }}</td>
+                        <td>{{ order.consumer ? order.consumer.firstName ~ ' ' ~ order.consumer.lastName : '—' }}</td>
+                        <td>{{ order.package and order.package.business ? order.package.business.name : '—' }}</td>
+                        <td>{{ order.createdAt ? order.createdAt|date('Y-m-d H:i') : '—' }}</td>
+                        <td class="table-actions">
+                            <a class="btn btn-ghost btn-sm" href="{{ path('app_order_view', { id: order.id }) }}">View</a>
+                            <a class="btn btn-ghost btn-sm" href="{{ path('app_order_edit', { id: order.id }) }}">Edit</a>
+                            <a class="btn btn-danger btn-sm" href="{{ path('app_order_delete', { id: order.id }) }}" onclick="return confirm('Delete this order?');">Delete</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">No orders found yet.</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock %}

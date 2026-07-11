@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Order | EcoMeal{% endblock %}
+
+{% block body %}
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Order form</p>
+            <h1 class="page-title">Edit order #{{ order.id }}</h1>
+            <p class="page-subtitle">Update order details.</p>
+        </div>
+    </section>
+
+    <section class="form-card">
+        {{ form_start(form, {'attr': {'class': 'app-form'}}) }}
+        <div class="form-grid">
+            {{ form_row(form.created_at) }}
+            {{ form_row(form.package) }}
+            {{ form_row(form.consumer) }}
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Save changes</button>
+            <a class="btn btn-ghost" href="{{ path('app_order_view', { id: order.id }) }}">Back to order</a>
+        </div>
+        {{ form_end(form) }}
+    </section>
+{% endblock %}

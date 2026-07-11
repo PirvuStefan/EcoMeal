@@ -39,6 +39,7 @@ security:
         - { path: ^/packages, roles: ROLE_USER }
         - { path: ^/business, roles: ROLE_USER }
         - { path: ^/customers, roles: ROLE_USER }
+        - { path: ^/orders, roles: ROLE_USER }
 
 when@test:
     security:

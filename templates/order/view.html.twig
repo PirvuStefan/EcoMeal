@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order #{{ order.id }} | EcoMeal{% endblock %}
+
+{% block body %}
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Order details</p>
+            <h1 class="page-title">Order #{{ order.id }}</h1>
+            <p class="page-subtitle">{{ order.createdAt ? order.createdAt|date('Y-m-d H:i') : '—' }}</p>
+        </div>
+
+        <div class="toolbar">
+            {% if is_granted('ROLE_ADMIN') %}
+                <a class="btn btn-ghost" href="{{ path('app_order_edit', { id: order.id }) }}">Edit</a>
+                <a class="btn btn-ghost" href="{{ path('app_order') }}">Back to orders</a>
+            {% elseif is_granted('ROLE_CONSUMER') %}
+                <a class="btn btn-ghost" href="{{ path('app_order_my') }}">Back to my orders</a>
+            {% elseif is_granted('ROLE_BUSINESS') %}
+                <a class="btn btn-ghost" href="{{ path('app_order_business') }}">Back to orders</a>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="detail-grid">
+        <article class="card detail-card detail-card--wide">
+            <p class="eyebrow">Details</p>
+            <dl class="info-list">
+                <div>
+                    <dt>Order ID</dt>
+                    <dd>{{ order.id }}</dd>
+                </div>
+                <div>
+                    <dt>Package</dt>
+                    <dd>{{ order.package ? order.package.description : '—' }}</dd>
+                </div>
+                <div>
+                    <dt>Business</dt>
+                    <dd>{{ order.package and order.package.business ? order.package.business.name : '—' }}</dd>
+                </div>
+                <div>
+                    <dt>Customer</dt>
+                    <dd>{{ order.consumer ? order.consumer.firstName ~ ' ' ~ order.consumer.lastName : '—' }}</dd>
+                </div>
+                <div>
+                    <dt>Price</dt>
+                    <dd>{{ order.package ? order.package.price|number_format(2, '.', ',') : '—' }}</dd>
+                </div>
+                <div>
+                    <dt>Created at</dt>
+                    <dd>{{ order.createdAt ? order.createdAt|date('Y-m-d H:i:s') : '—' }}</dd>
+                </div>
+            </dl>
+        </article>
+    </section>
+{% endblock %}

@@ -14,6 +14,11 @@
             {% if is_granted('ROLE_BUSINESS') %}
                 <a class="btn btn-primary" href="{{ path('app_package_edit', { id: package.id }) }}">Edit package</a>
             {% endif %}
+            {% if is_granted('ROLE_CONSUMER') and not package.consumerOrder %}
+                <form method="post" action="{{ path('app_order_create_from_package', { id: package.id }) }}">
+                    <button class="btn btn-primary" type="submit">Order</button>
+                </form>
+            {% endif %}
             <a class="btn btn-ghost" href="{{ path('app_package') }}">Back to list</a>
         </div>
     </section>
@@ -45,6 +50,10 @@
                 <div>
                     <dt>Category</dt>
                     <dd>{{ package.category ? package.category.name : '—' }}</dd>
+                </div>
+                <div>
+                    <dt>Order status</dt>
+                    <dd>{{ package.consumerOrder ? 'Already ordered' : 'Available' }}</dd>
                 </div>
             </dl>
         </article>

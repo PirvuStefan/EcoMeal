@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Orders | EcoMeal{% endblock %}
+
+{% block body %}
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Orders</p>
+            <h1 class="page-title">My orders</h1>
+            <p class="page-subtitle">Track your placed orders.</p>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <div>
+                <strong>{{ orders|length }}</strong>
+                <span class="muted">orders placed</span>
+            </div>
+        </div>
+
+        <div class="table-shell">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Package</th>
+                    <th>Business</th>
+                    <th>Price</th>
+                    <th>Created at</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.package ? order.package.description : '—' }}</td>
+                        <td>{{ order.package and order.package.business ? order.package.business.name : '—' }}</td>
+                        <td>{{ order.package ? order.package.price|number_format(2, '.', ',') : '—' }}</td>
+                        <td>{{ order.createdAt ? order.createdAt|date('Y-m-d H:i') : '—' }}</td>
+                        <td class="table-actions">
+                            <a class="btn btn-ghost btn-sm" href="{{ path('app_order_view', { id: order.id }) }}">View</a>
+                            <a class="btn btn-danger btn-sm" href="{{ path('app_order_delete', { id: order.id }) }}" onclick="return confirm('Cancel this order?');">Cancel</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">You have no orders yet.</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock %}
