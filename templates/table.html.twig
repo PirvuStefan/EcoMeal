@@ -14,26 +14,50 @@
         </thead>
         <tbody>
         {% for package in packages %}
-            <tr>
+            {% set isMysteryBox = package.isMysteryBox|default(false) %}
+            <tr class="{{ isMysteryBox ? 'package-row package-row--mystery' : '' }}">
                 <td>
-                    {{ package.name ? package.name : '—' }}
+                    <div class="package-name">
+                        <span>{{ package.name ? package.name : '—' }}</span>
+                        {% if isMysteryBox %}
+                            <span class="badge badge--mystery">Highlighted</span>
+                        {% endif %}
+                    </div>
                 </td>
                 <td>
-                    <a class="table-link" href="{{ path('app_package_view', { id: package.id }) }}">
-                        {{ package.description }}
-                    </a>
-                    <div class="table-meta">ID {{ package.id }}</div>
+                    {% if isMysteryBox %}
+                        <span class="table-link">{{ package.description }}</span>
+                    {% else %}
+                        <a class="table-link" href="{{ path('app_package_view', { id: package.id }) }}">
+                            {{ package.description }}
+                        </a>
+                    {% endif %}
+                    <div class="table-meta">
+                        {% if isMysteryBox %}
+                            Calculated from business average
+                        {% else %}
+                            ID {{ package.id }}
+                        {% endif %}
+                    </div>
                 </td>
-                <td>{{ package.price|number_format(2, '.', ',') }}</td>
-                <td>{{ package.photo }}</td>
+                <td>
+                    <span class="{{ isMysteryBox ? 'package-price package-price--mystery' : 'package-price' }}">
+                        {{ package.price|number_format(2, '.', ',') }}
+                    </span>
+                </td>
+                <td>{{ package.photo ? package.photo : '—' }}</td>
                 <td>{{ package.createdAt ? package.createdAt|date('Y-m-d H:i') : '—' }}</td>
                 <td><span class="badge">{{ package.category ? package.category.name : '—' }}</span></td>
                 <td>{{ package.business ? package.business.name : '—' }}</td>
                 <td class="table-actions">
-                    <a class="btn btn-ghost btn-sm" href="{{ path('app_package_view', { id: package.id }) }}">View</a>
-                    {% if is_granted('ROLE_BUSINESS') and app.user.business == package.business %}
-                        <a class="btn btn-ghost btn-sm" href="{{ path('app_package_edit', { id: package.id }) }}">Edit</a>
-                        <a class="btn btn-danger btn-sm" href="{{ path('app_package_delete', { id: package.id }) }}" onclick="return confirm('Delete this package?');">Delete</a>
+                    {% if isMysteryBox %}
+                        <span class="table-meta">Special package</span>
+                    {% else %}
+                        <a class="btn btn-ghost btn-sm" href="{{ path('app_package_view', { id: package.id }) }}">View</a>
+                        {% if is_granted('ROLE_BUSINESS') and app.user.business == package.business %}
+                            <a class="btn btn-ghost btn-sm" href="{{ path('app_package_edit', { id: package.id }) }}">Edit</a>
+                            <a class="btn btn-danger btn-sm" href="{{ path('app_package_delete', { id: package.id }) }}" onclick="return confirm('Delete this package?');">Delete</a>
+                        {% endif %}
                     {% endif %}
                 </td>
             </tr>

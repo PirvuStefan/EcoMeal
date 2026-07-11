@@ -289,6 +289,34 @@ a:hover {
     font-weight: 700;
 }
 
+.badge--mystery {
+    background: rgba(245, 158, 11, 0.15);
+    color: #92400e;
+}
+
+.package-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.package-price {
+    font-weight: 700;
+}
+
+.package-price--mystery {
+    color: #92400e;
+}
+
+.package-row--mystery {
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.package-row--mystery:hover {
+    background: rgba(245, 158, 11, 0.12);
+}
+
 .table-actions {
     white-space: nowrap;
 }

@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Dto\PackageSearchFilter;
+use App\Entity\Business;
 use App\Entity\Package;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use DateTimeImmutable;
 
 /**
  * @extends ServiceEntityRepository<Package>
@@ -52,7 +54,32 @@ class PackageRepository extends ServiceEntityRepository
                 ->setParameter('businessType', $filter->businessType->getId());
         }
 
-        return $qb->getQuery()->getResult();
+        $packages = $qb->getQuery()->getResult();
+
+        if ($filter->business instanceof Business) {
+            $businessStats = $this->createQueryBuilder('avgPackage')
+                ->select('COUNT(avgPackage.id) AS packageCount, AVG(avgPackage.price) AS averagePrice')
+                ->andWhere('avgPackage.business = :business')
+                ->setParameter('business', $filter->business)
+                ->getQuery()
+                ->getSingleResult();
+
+            if ((int) $businessStats['packageCount'] > 0) {
+                $mysteryBox = new Package();
+                $mysteryBox->setName('Mystery Box');
+                $mysteryBox->setDescription('Surprise');
+                $mysteryBox->setPrice((float) $businessStats['averagePrice']);
+                $mysteryBox->setPhoto('');
+                $mysteryBox->setCreatedAt(new DateTimeImmutable());
+                $mysteryBox->setCategory(null);
+                $mysteryBox->setBusiness($filter->business);
+                $mysteryBox->isMysteryBox = true;
+
+                $packages[] = $mysteryBox;
+            }
+        }
+
+        return $packages;
 
     }
 
