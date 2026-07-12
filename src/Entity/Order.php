@@ -25,6 +25,9 @@ class Order
     #[ORM\JoinColumn(nullable: false)]
     private ?Consumer $consumer = null;
 
+    #[ORM\Column(length: 40)]
+    private ?string $status = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,6 +65,18 @@ class Order
     public function setConsumer(?Consumer $consumer): static
     {
         $this->consumer = $consumer;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

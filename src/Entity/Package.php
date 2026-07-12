@@ -43,6 +43,12 @@ class Package
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\Column]
+    private ?float $decrement = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $discounted_price = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -147,6 +153,30 @@ class Package
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getDecrement(): ?float
+    {
+        return $this->decrement;
+    }
+
+    public function setDecrement(float $decrement): static
+    {
+        $this->decrement = $decrement;
+
+        return $this;
+    }
+
+    public function getDiscountedPrice(): ?float
+    {
+        return $this->discounted_price;
+    }
+
+    public function setDiscountedPrice(?float $discounted_price): static
+    {
+        $this->discounted_price = $discounted_price;
 
         return $this;
     }
