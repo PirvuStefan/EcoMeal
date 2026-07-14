@@ -31,6 +31,7 @@
                     <th>Package</th>
                     <th>Customer</th>
                     <th>Business</th>
+                    <th>Status</th>
                     <th>Created at</th>
                     <th>Actions</th>
                 </tr>
@@ -42,16 +43,21 @@
                         <td>{{ order.package ? order.package.description : '—' }}</td>
                         <td>{{ order.consumer ? order.consumer.firstName ~ ' ' ~ order.consumer.lastName : '—' }}</td>
                         <td>{{ order.package and order.package.business ? order.package.business.name : '—' }}</td>
+                        <td><span class="badge badge--{{ order.status }}">{{ order.status|capitalize }}</span></td>
                         <td>{{ order.createdAt ? order.createdAt|date('Y-m-d H:i') : '—' }}</td>
                         <td class="table-actions">
                             <a class="btn btn-ghost btn-sm" href="{{ path('app_order_view', { id: order.id }) }}">View</a>
                             <a class="btn btn-ghost btn-sm" href="{{ path('app_order_edit', { id: order.id }) }}">Edit</a>
-                            <a class="btn btn-danger btn-sm" href="{{ path('app_order_delete', { id: order.id }) }}" onclick="return confirm('Delete this order?');">Delete</a>
+                            {% if order.status == 'placed' %}
+                                <form method="post" action="{{ path('app_order_cancel', { id: order.id }) }}" style="display:inline" onsubmit="return confirm('Cancel this order?');">
+                                    <button class="btn btn-danger btn-sm" type="submit">Cancel</button>
+                                </form>
+                            {% endif %}
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="6">
+                        <td colspan="7">
                             <div class="empty-state">No orders found yet.</div>
                         </td>
                     </tr>

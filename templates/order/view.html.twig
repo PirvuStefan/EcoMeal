@@ -13,10 +13,25 @@
         <div class="toolbar">
             {% if is_granted('ROLE_ADMIN') %}
                 <a class="btn btn-ghost" href="{{ path('app_order_edit', { id: order.id }) }}">Edit</a>
+                {% if order.status == 'placed' %}
+                    <form method="post" action="{{ path('app_order_cancel', { id: order.id }) }}" style="display:inline" onsubmit="return confirm('Cancel this order?');">
+                        <button class="btn btn-danger" type="submit">Cancel order</button>
+                    </form>
+                {% endif %}
                 <a class="btn btn-ghost" href="{{ path('app_order') }}">Back to orders</a>
             {% elseif is_granted('ROLE_CONSUMER') %}
+                {% if order.status == 'placed' %}
+                    <form method="post" action="{{ path('app_order_cancel', { id: order.id }) }}" style="display:inline" onsubmit="return confirm('Cancel this order?');">
+                        <button class="btn btn-danger" type="submit">Cancel order</button>
+                    </form>
+                {% endif %}
                 <a class="btn btn-ghost" href="{{ path('app_order_my') }}">Back to my orders</a>
             {% elseif is_granted('ROLE_BUSINESS') %}
+                {% if order.status == 'placed' %}
+                    <form method="post" action="{{ path('app_order_complete', { id: order.id }) }}" style="display:inline" onsubmit="return confirm('Mark this order as picked up?');">
+                        <button class="btn btn-primary" type="submit">Mark as picked up</button>
+                    </form>
+                {% endif %}
                 <a class="btn btn-ghost" href="{{ path('app_order_business') }}">Back to orders</a>
             {% endif %}
         </div>
@@ -45,6 +60,10 @@
                 <div>
                     <dt>Price</dt>
                     <dd>{{ order.package ? order.package.price|number_format(2, '.', ',') : '—' }}</dd>
+                </div>
+                <div>
+                    <dt>Status</dt>
+                    <dd><span class="badge badge--{{ order.status }}">{{ order.status|capitalize }}</span></dd>
                 </div>
                 <div>
                     <dt>Created at</dt>

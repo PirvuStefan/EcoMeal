@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Dto\PackageSearchFilter;
 use App\Entity\Business;
 use App\Entity\Package;
+use App\Enum\PackageStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use DateTimeImmutable;
@@ -27,7 +28,9 @@ class PackageRepository extends ServiceEntityRepository
             ->leftJoin('p.business', 'b')
             ->addSelect('b')
             ->leftJoin('b.business_type', 'bt')
-            ->addSelect('bt');
+            ->addSelect('bt')
+            ->andWhere('p.status = :availableStatus')
+            ->setParameter('availableStatus', PackageStatus::AVAILABLE->value);
 
         if($filter->name) {
             $qb->andWhere('p.name LIKE :name')

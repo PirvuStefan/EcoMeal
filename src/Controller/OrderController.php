@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Order;
 use App\Entity\Package;
 use App\Entity\User;
+use App\Enum\OrderStatus;
+use App\Enum\PackageStatus;
 use App\Form\OrderFormType;
 use App\Repository\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -101,8 +103,8 @@ final class OrderController extends AbstractController
             return $this->redirectToRoute('app_package');
         }
 
-        if ($package->getConsumerOrder()) {
-            $this->addFlash('warning', 'This package was already ordered.');
+        if ($package->getStatus() !== PackageStatus::AVAILABLE->value) {
+            $this->addFlash('warning', 'This package is no longer available.');
             return $this->redirectToRoute('app_package_view', ['id' => $package->getId()]);
         }
 
@@ -110,6 +112,9 @@ final class OrderController extends AbstractController
         $order->setCreatedAt(new \DateTimeImmutable());
         $order->setPackage($package);
         $order->setConsumer($user->getConsumer());
+        $order->setStatus(OrderStatus::PLACED->value);
+
+        $package->setStatus(PackageStatus::RESERVED->value);
 
         $entityManager->persist($order);
         $entityManager->flush();
@@ -151,26 +156,55 @@ final class OrderController extends AbstractController
         ]);
     }
 
-    #[Route('/orders/{id}/delete', name: 'app_order_delete', methods: ['GET'], requirements: ['id' => '\d+'])]
-    public function delete(Order $order, EntityManagerInterface $entityManager, Security $security): Response
+    #[Route('/orders/{id}/cancel', name: 'app_order_cancel', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function cancel(Order $order, EntityManagerInterface $entityManager, Security $security): Response
     {
         $user = $security->getUser();
-        if (!$user || !$this->canDeleteOrder($user, $order)) {
+        if (!$user || !$this->canCancelOrder($user, $order)) {
             return $this->redirectToRoute('app_package');
+        }
+
+        $package = $order->getPackage();
+        if ($package) {
+            $package->setStatus(PackageStatus::AVAILABLE->value);
         }
 
         $entityManager->remove($order);
         $entityManager->flush();
 
-        if (in_array('ROLE_CONSUMER', $user->getRoles(), true)) {
-            return $this->redirectToRoute('app_order_my');
+        $this->addFlash('success', 'Your order has been cancelled.');
+
+        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+            return $this->redirectToRoute('app_order');
         }
 
-        if (in_array('ROLE_BUSINESS', $user->getRoles(), true)) {
+        return $this->redirectToRoute('app_order_my');
+    }
+
+    #[Route('/orders/{id}/complete', name: 'app_order_complete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function complete(Order $order, EntityManagerInterface $entityManager, Security $security): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_BUSINESS');
+
+        $user = $security->getUser();
+        if (
+            !$user
+            || !$user->getBusiness()
+            || !$order->getPackage()
+            || !$order->getPackage()->getBusiness()
+            || $user->getBusiness()->getId() !== $order->getPackage()->getBusiness()->getId()
+        ) {
+            $this->addFlash('error', 'You are not authorised to complete this order.');
             return $this->redirectToRoute('app_order_business');
         }
 
-        return $this->redirectToRoute('app_order');
+        $order->setStatus(OrderStatus::COMPLETED->value);
+        $order->getPackage()->setStatus(PackageStatus::SOLD->value);
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Order marked as picked up.');
+        return $this->redirectToRoute('app_order_business');
     }
 
     private function canAccessOrder(User $user, Order $order): bool
@@ -195,25 +229,15 @@ final class OrderController extends AbstractController
             && $user->getBusiness()->getId() === $order->getPackage()->getBusiness()->getId();
     }
 
-    private function canDeleteOrder(User $user, Order $order): bool
+    private function canCancelOrder(User $user, Order $order): bool
     {
         if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             return true;
         }
 
-        if (
-            in_array('ROLE_CONSUMER', $user->getRoles(), true)
+        return in_array('ROLE_CONSUMER', $user->getRoles(), true)
             && $user->getConsumer()
             && $order->getConsumer()
-            && $user->getConsumer()->getId() === $order->getConsumer()->getId()
-        ) {
-            return true;
-        }
-
-        return in_array('ROLE_BUSINESS', $user->getRoles(), true)
-            && $user->getBusiness()
-            && $order->getPackage()
-            && $order->getPackage()->getBusiness()
-            && $user->getBusiness()->getId() === $order->getPackage()->getBusiness()->getId();
+            && $user->getConsumer()->getId() === $order->getConsumer()->getId();
     }
 }

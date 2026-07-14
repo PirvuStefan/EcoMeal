@@ -27,6 +27,7 @@
                     <th>Package</th>
                     <th>Business</th>
                     <th>Price</th>
+                    <th>Status</th>
                     <th>Created at</th>
                     <th>Actions</th>
                 </tr>
@@ -38,15 +39,20 @@
                         <td>{{ order.package ? order.package.description : '—' }}</td>
                         <td>{{ order.package and order.package.business ? order.package.business.name : '—' }}</td>
                         <td>{{ order.package ? order.package.price|number_format(2, '.', ',') : '—' }}</td>
+                        <td><span class="badge badge--{{ order.status }}">{{ order.status|capitalize }}</span></td>
                         <td>{{ order.createdAt ? order.createdAt|date('Y-m-d H:i') : '—' }}</td>
                         <td class="table-actions">
                             <a class="btn btn-ghost btn-sm" href="{{ path('app_order_view', { id: order.id }) }}">View</a>
-                            <a class="btn btn-danger btn-sm" href="{{ path('app_order_delete', { id: order.id }) }}" onclick="return confirm('Cancel this order?');">Cancel</a>
+                            {% if order.status == 'placed' %}
+                                <form method="post" action="{{ path('app_order_cancel', { id: order.id }) }}" style="display:inline" onsubmit="return confirm('Cancel this order?');">
+                                    <button class="btn btn-danger btn-sm" type="submit">Cancel</button>
+                                </form>
+                            {% endif %}
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="6">
+                        <td colspan="7">
                             <div class="empty-state">You have no orders yet.</div>
                         </td>
                     </tr>
