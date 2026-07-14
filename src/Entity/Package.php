@@ -49,6 +49,9 @@ class Package
     #[ORM\Column(nullable: true)]
     private ?float $discounted_price = null;
 
+    #[ORM\Column(length: 40, nullable: true)]
+    private ?string $status = 'available';
+
     public function getId(): ?int
     {
         return $this->id;
@@ -177,6 +180,18 @@ class Package
     public function setDiscountedPrice(?float $discounted_price): static
     {
         $this->discounted_price = $discounted_price;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

@@ -26,7 +26,7 @@ class Order
     private ?Consumer $consumer = null;
 
     #[ORM\Column(length: 40)]
-    private ?string $status = null;
+    private ?string $status = 'placed';
 
     public function getId(): ?int
     {

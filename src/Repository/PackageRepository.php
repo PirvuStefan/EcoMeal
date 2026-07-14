@@ -73,6 +73,7 @@ class PackageRepository extends ServiceEntityRepository
                 $mysteryBox->setCreatedAt(new DateTimeImmutable());
                 $mysteryBox->setCategory(null);
                 $mysteryBox->setBusiness($filter->business);
+                $mysteryBox->setStatus('available');
                 $mysteryBox->isMysteryBox = true;
 
                 $packages[] = $mysteryBox;
