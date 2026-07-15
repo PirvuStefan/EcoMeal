@@ -1,55 +1,63 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
+use App\Enum\PackageStatus;
 use App\Repository\PackageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:package:add-discount',
-    description: 'Add a short description for your command',
+    description: 'Apply a 30-minute discount step to all available packages (runs every 30 min, 17:00–21:00).',
 )]
 class PackageAddDiscountCommand extends Command
 {
-    public function __construct(PackageRepository $packageRepository, private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private readonly PackageRepository $packageRepository,
+        private readonly EntityManagerInterface $entityManager,
+    ) {
         parent::__construct();
-    }
-
-    protected function configure(): void
-    {
-        $this
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
-        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $package = $this->packageRepository->findOneBy(['id' => 1]); // Example: find a package with ID 1
-        $arg1 = $input->getArgument('arg1');
 
-        $price = $package->getPrice();
+        $packages = $this->packageRepository->findBy(['status' => PackageStatus::AVAILABLE->value]);
 
-        $reducedPrice = $price - (float)$package->getReducedPrice()/100 * $price;
-
-        if ($arg1) {
-            $io->note(sprintf('You passed an argument: %s', $arg1));
+        if (empty($packages)) {
+            $io->info('No available packages found.');
+            return Command::SUCCESS;
         }
 
-        if ($input->getOption('option1')) {
-            // ...
+        $updated = 0;
+
+        foreach ($packages as $package) {
+            $decrement = $package->getDecrement();
+
+            if ($decrement === null || $decrement <= 0.0) {
+                continue;
+            }
+
+            $base = $package->getDiscountedPrice() ?? $package->getPrice();
+
+            $newPrice = $base - ($base * $decrement / 100);
+            $newPrice = max(0.0, round($newPrice, 2));
+
+            $package->setDiscountedPrice($newPrice);
+            $updated++;
         }
 
-        $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
+        $this->entityManager->flush();
+
+        $io->success(sprintf('Applied discount step to %d package(s).', $updated));
 
         return Command::SUCCESS;
     }
