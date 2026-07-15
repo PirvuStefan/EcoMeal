@@ -43,7 +43,7 @@
                         <td>{{ order.createdAt ? order.createdAt|date('Y-m-d H:i') : '—' }}</td>
                         <td class="table-actions">
                             <a class="btn btn-ghost btn-sm" href="{{ path('app_order_view', { id: order.id }) }}">View</a>
-                            {% if order.status == 'placed' %}
+                            {% if order.status == 'placed' and not order.isMysteryBox %}
                                 <form method="post" action="{{ path('app_order_cancel', { id: order.id }) }}" style="display:inline" onsubmit="return confirm('Cancel this order?');">
                                     <button class="btn btn-danger btn-sm" type="submit">Cancel</button>
                                 </form>

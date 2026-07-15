@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Business;
 use App\Entity\Order;
 use App\Entity\Package;
 use App\Entity\User;
+use App\Repository\PackageRepository;
 use App\Enum\OrderStatus;
 use App\Enum\PackageStatus;
 use App\Form\OrderFormType;
@@ -156,6 +158,40 @@ final class OrderController extends AbstractController
         ]);
     }
 
+    #[Route('/business/{id}/mystery-box/order', name: 'app_order_mystery_box', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function orderMysteryBox(Business $business, Security $security, EntityManagerInterface $entityManager, PackageRepository $packageRepository): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_CONSUMER');
+
+        $user = $security->getUser();
+        if (!$user || !$user->getConsumer()) {
+            $this->addFlash('error', 'Your account has no linked customer profile.');
+            return $this->redirectToRoute('app_package');
+        }
+
+        $package = $packageRepository->findRandomAvailableByBusiness($business);
+
+        if (!$package) {
+            $this->addFlash('warning', 'No available packages from this business right now.');
+            return $this->redirectToRoute('app_package');
+        }
+
+        $order = new Order();
+        $order->setCreatedAt(new \DateTimeImmutable());
+        $order->setPackage($package);
+        $order->setConsumer($user->getConsumer());
+        $order->setStatus(OrderStatus::PLACED->value);
+        $order->setIsMysteryBox(true);
+
+        $package->setStatus(PackageStatus::RESERVED->value);
+
+        $entityManager->persist($order);
+        $entityManager->flush();
+
+        $this->addFlash('success', sprintf('Mystery box ordered! You got: %s from %s.', $package->getName() ?: $package->getDescription(), $business->getName()));
+        return $this->redirectToRoute('app_order_my');
+    }
+
     #[Route('/orders/{id}/cancel', name: 'app_order_cancel', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function cancel(Order $order, EntityManagerInterface $entityManager, Security $security): Response
     {
@@ -231,6 +267,10 @@ final class OrderController extends AbstractController
 
     private function canCancelOrder(User $user, Order $order): bool
     {
+        if ($order->isIsMysteryBox()) {
+            return false;
+        }
+
         if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             return true;
         }

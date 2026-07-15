@@ -87,6 +87,23 @@ class PackageRepository extends ServiceEntityRepository
 
     }
 
+    public function findRandomAvailableByBusiness(Business $business): ?Package
+    {
+        $packages = $this->createQueryBuilder('p')
+            ->where('p.business = :business')
+            ->andWhere('p.status = :status')
+            ->setParameter('business', $business)
+            ->setParameter('status', PackageStatus::AVAILABLE->value)
+            ->getQuery()
+            ->getResult();
+
+        if (empty($packages)) {
+            return null;
+        }
+
+        return $packages[array_rand($packages)];
+    }
+
 //    /**
 //     * @return Package[] Returns an array of Package objects
 //     */

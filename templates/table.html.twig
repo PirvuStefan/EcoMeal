@@ -51,7 +51,13 @@
                 <td>{{ package.business ? package.business.name : '—' }}</td>
                 <td class="table-actions">
                     {% if isMysteryBox %}
-                        <span class="table-meta">Special package</span>
+                        {% if is_granted('ROLE_CONSUMER') %}
+                            <form method="post" action="{{ path('app_order_mystery_box', { id: package.business.id }) }}" onsubmit="return confirm('Order a mystery box from {{ package.business.name }}? You cannot cancel this order.');">
+                                <button class="btn btn-primary btn-sm" type="submit">Order Mystery Box</button>
+                            </form>
+                        {% else %}
+                            <span class="table-meta">Special package</span>
+                        {% endif %}
                     {% else %}
                         <a class="btn btn-ghost btn-sm" href="{{ path('app_package_view', { id: package.id }) }}">View</a>
                         {% if is_granted('ROLE_BUSINESS') and app.user.business == package.business %}

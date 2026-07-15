@@ -28,6 +28,9 @@ class Order
     #[ORM\Column(length: 40)]
     private ?string $status = 'placed';
 
+    #[ORM\Column]
+    private bool $isMysteryBox = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -77,6 +80,18 @@ class Order
     public function setStatus(string $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function isIsMysteryBox(): bool
+    {
+        return $this->isMysteryBox;
+    }
+
+    public function setIsMysteryBox(bool $isMysteryBox): static
+    {
+        $this->isMysteryBox = $isMysteryBox;
 
         return $this;
     }
