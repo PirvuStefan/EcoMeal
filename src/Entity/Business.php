@@ -43,9 +43,16 @@ class Business
     #[ORM\OneToOne(mappedBy: 'business', cascade: ['persist', 'remove'])]
     private ?User $user = null;
 
+    /**
+     * @var Collection<int, Favorite>
+     */
+    #[ORM\OneToMany(targetEntity: Favorite::class, mappedBy: 'business', orphanRemoval: true)]
+    private Collection $favoritedBy;
+
     public function __construct()
     {
         $this->packages = new ArrayCollection();
+        $this->favoritedBy = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -175,5 +182,13 @@ class Business
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Favorite>
+     */
+    public function getFavoritedBy(): Collection
+    {
+        return $this->favoritedBy;
     }
 }

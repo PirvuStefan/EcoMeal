@@ -38,6 +38,7 @@
                         <a href="{{ path('app_order') }}">Orders</a>
                     {% elseif is_granted('ROLE_CONSUMER') %}
                         <a href="{{ path('app_order_my') }}">My orders</a>
+                        <a href="{{ path('app_favorite') }}">Favorites</a>
                     {% elseif is_granted('ROLE_BUSINESS') %}
                         <a href="{{ path('app_order_business') }}">Orders</a>
                     {% endif %}

@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My favorites | EcoMeal{% endblock %}
+
+{% block body %}
+    <section class="page-head">
+        <div>
+            <p class="eyebrow">Favorites</p>
+            <h1 class="page-title">My favorite businesses</h1>
+            <p class="page-subtitle">Businesses you've marked as favorite.</p>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="table-shell">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>City</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for favorite in favorites %}
+                    {% set business = favorite.business %}
+                    <tr>
+                        <td>{{ business.name }}</td>
+                        <td>{{ business.city }}</td>
+                        <td>{{ business.street }} {{ business.houseNumber }}</td>
+                        <td>{{ business.phoneNumber }}</td>
+                        <td class="table-actions">
+                            <form method="post" action="{{ path('app_favorite_remove', { id: business.id }) }}" onsubmit="return confirm('Remove ' ~ business.name ~ ' from your favorites?');">
+                                <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">You have no favorite businesses yet.</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock %}

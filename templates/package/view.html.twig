@@ -62,6 +62,17 @@
             <p class="eyebrow">Business</p>
             <p class="stat">#{{ package.business ? package.business.id : '—' }}</p>
             <p class="muted">{{ package.business ? package.business.name : 'No business assigned' }}</p>
+            {% if is_granted('ROLE_CONSUMER') and package.business %}
+                {% if is_favorite %}
+                    <form method="post" action="{{ path('app_favorite_remove', { id: package.business.id }) }}">
+                        <button class="btn btn-ghost btn-sm" type="submit">Remove from favorites</button>
+                    </form>
+                {% else %}
+                    <form method="post" action="{{ path('app_favorite_add', { id: package.business.id }) }}">
+                        <button class="btn btn-ghost btn-sm" type="submit">Add to favorites</button>
+                    </form>
+                {% endif %}
+            {% endif %}
         </article>
     </section>
 {% endblock %}

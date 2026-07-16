@@ -9,6 +9,7 @@ use App\Entity\Package;
 use App\Form\PackageFiltersType;
 use App\Form\PackageFormType;
 use App\Repository\BusinessRepository;
+use App\Repository\FavoriteRepository;
 use App\Repository\PackageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,11 +36,15 @@ final class PackageController extends AbstractController
     }
 
     #[Route('/packages/{id}', name: 'app_package_view')]
-    public function view(Package $package): Response
+    public function view(Package $package, FavoriteRepository $favoriteRepository, Security $security): Response
     {
+        $user = $security->getUser();
+        $isFavorite = $user && $package->getBusiness()
+            && $favoriteRepository->findOneByUserAndBusiness($user, $package->getBusiness()) !== null;
 
         return $this->render('package/view.html.twig', [
             'package' => $package,
+            'is_favorite' => $isFavorite,
         ]);
     }
 

@@ -43,6 +43,13 @@ class Schedule implements ScheduleProviderInterface
                     new RunCommandMessage('app:package:add-discount'),
                 )
             )
+            // testing: every 5 minutes
+            ->add(
+                RecurringMessage::trigger(
+                    CronExpressionTrigger::fromSpec('*/5 * * * *'),
+                    new RunCommandMessage('app:test:hello'),
+                )
+            )
         ;
     }
 }
