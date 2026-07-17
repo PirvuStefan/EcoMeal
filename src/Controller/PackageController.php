@@ -14,9 +14,12 @@ use App\Repository\PackageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use function PHPUnit\Framework\isNull;
 
 final class PackageController extends AbstractController
@@ -49,7 +52,15 @@ final class PackageController extends AbstractController
     }
 
     #[Route('/business/{id}/new/package', name: 'app_package_new', methods: ['GET','POST'])]
-    public function new(Request $request, int $id, EntityManagerInterface $entityManager, BusinessRepository $repositoryCall, Security $security): Response
+    public function new(
+        Request $request,
+        int $id,
+        EntityManagerInterface $entityManager,
+        BusinessRepository $repositoryCall,
+        Security $security,
+        SluggerInterface $slugger,
+        #[Autowire(param: 'kernel.project_dir')] string $projectDir,
+    ): Response
     {
 
         $this->denyAccessUnlessGranted('ROLE_BUSINESS');
@@ -72,6 +83,12 @@ final class PackageController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile|null $photoFile */
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $package->setPhoto($this->storePackagePhoto($photoFile, $slugger, $projectDir));
+            }
+
             $package->setCreatedAt(new \DateTimeImmutable());
             $entityManager->persist($package);
             $entityManager->flush();
@@ -90,10 +107,28 @@ final class PackageController extends AbstractController
 
     }
 
+    private function storePackagePhoto(UploadedFile $photoFile, SluggerInterface $slugger, string $projectDir): string
+    {
+        $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeFilename = $slugger->slug($originalFilename);
+        $newFilename = sprintf('%s-%s.%s', $safeFilename, uniqid(), $photoFile->guessExtension());
+
+        $photoFile->move($projectDir.'/assets/pfp', $newFilename);
+
+        return $newFilename;
+    }
+
     //update a package
 
     #[Route('/packages/{id}/edit', name: 'app_package_edit', methods: ['GET','POST'])]
-    public function edit(Request $request, Package $package, EntityManagerInterface $entityManager, Security $security): Response
+    public function edit(
+        Request $request,
+        Package $package,
+        EntityManagerInterface $entityManager,
+        Security $security,
+        SluggerInterface $slugger,
+        #[Autowire(param: 'kernel.project_dir')] string $projectDir,
+    ): Response
     {
         $form = $this->createForm(PackageFormType::class, $package);
         $form->handleRequest($request);
@@ -111,6 +146,12 @@ final class PackageController extends AbstractController
 
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile|null $photoFile */
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $package->setPhoto($this->storePackagePhoto($photoFile, $slugger, $projectDir));
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_package');

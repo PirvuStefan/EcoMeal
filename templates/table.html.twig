@@ -45,7 +45,11 @@
                         {{ package.price|number_format(2, '.', ',') }}
                     </span>
                 </td>
-                <td>{{ package.photo ? package.photo : '—' }}</td>
+                <td>
+                    {% if package.photo %}
+                        <img class="package-photo-thumb" src="{{ asset('pfp/' ~ package.photo) }}" alt="{{ package.name }}">
+                    {% endif %}
+                </td>
                 <td>{{ package.createdAt ? package.createdAt|date('Y-m-d H:i') : '—' }}</td>
                 <td><span class="badge">{{ package.category ? package.category.name : '—' }}</span></td>
                 <td>{{ package.business ? package.business.name : '—' }}</td>

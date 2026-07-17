@@ -41,7 +41,13 @@
                 </div>
                 <div>
                     <dt>Photo</dt>
-                    <dd>{{ package.photo }}</dd>
+                    <dd>
+                        {% if package.photo %}
+                            <img class="package-photo" src="{{ asset('pfp/' ~ package.photo) }}" alt="{{ package.name }}">
+                        {% else %}
+                            —
+                        {% endif %}
+                    </dd>
                 </div>
                 <div>
                     <dt>Created at</dt>
